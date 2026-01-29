@@ -1,0 +1,2 @@
+# eventrole
+custom discord bot
