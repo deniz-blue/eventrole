@@ -8,12 +8,19 @@ export const onMessageReactionAdd: (...a: ClientEvents["messageReactionAdd"]) =>
 	if (!thread.isThread()) {
 		return;
 	}
+
+	// Check if reaction is on the start message of the thread
+	if (reaction.message.id !== thread.id) {
+		return;
+	}
+
 	// Fetch guild data
 	const guildData = await db.getGuildData(thread.guild.id);
 	const eventThreadData = guildData.eventThreads[thread.id];
 	if (!eventThreadData) {
 		return;
 	}
+	
 	// Assign the role to the user
 	const member = await thread.guild.members.fetch(user.id);
 	if (member) {

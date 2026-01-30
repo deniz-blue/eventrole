@@ -19,5 +19,23 @@ export const onThreadUpdate: (...a: ClientEvents["threadUpdate"]) => Promise<voi
 		// Remove from database
 		delete guildData.eventThreads[newThread.id];
 		await db.setGuildData(newThread.guild.id, guildData);
+
+		return;
+	}
+
+	// Rename role if thread name changed
+	if (oldThread.name !== newThread.name) {
+		// Fetch guild data
+		const guildData = await db.getGuildData(newThread.guild.id);
+		const eventThreadData = guildData.eventThreads[newThread.id];
+		if (!eventThreadData) {
+			return;
+		}
+		// Fetch role
+		const role = newThread.guild.roles.cache.get(eventThreadData.roleId);
+		if (role) {
+			// Rename role
+			await role.setName(`Event: ${newThread.name}`, `Renaming event role for thread ${newThread.id} due to thread name change`);
+		}
 	}
 };

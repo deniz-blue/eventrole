@@ -8,6 +8,12 @@ export const onMessageReactionRemove: (...a: ClientEvents["messageReactionRemove
 	if (!thread.isThread()) {
 		return;
 	}
+
+	// Check if reaction is on the start message of the thread
+	if (reaction.message.id !== thread.id) {
+		return;
+	}
+
 	// Fetch guild data
 	const guildData = await db.getGuildData(thread.guild.id);
 	const eventThreadData = guildData.eventThreads[thread.id];
