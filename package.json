@@ -1,0 +1,28 @@
+{
+	"name": "bot",
+	"type": "module",
+	"main": "index.js",
+	"private": true,
+	"scripts": {
+		"dev": "tsx watch src/index.ts",
+		"start": "tsx src/index.ts",
+		"pub": "tsx src/publish.ts"
+	},
+	"license": "MIT",
+	"packageManager": "pnpm@10.18.2",
+	"devDependencies": {
+		"@types/node": "^25.1.0",
+		"@types/react": "npm:pure-react-types@^0.1.4",
+		"tsx": "^4.21.0",
+		"typescript": "^5.9.3"
+	},
+	"dependencies": {
+		"@evnt/schema": "^0.0.2",
+		"discord-jsx-renderer": "0.0.16",
+		"discord.js": "^14.25.1",
+		"dotenv": "^17.2.3",
+		"lowdb": "^7.0.1",
+		"react": "^19.2.4",
+		"react-router": "^7.13.0"
+	}
+}
