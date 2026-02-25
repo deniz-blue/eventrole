@@ -22,12 +22,12 @@ if (!existsSync(".data")) mkdirSync(".data", { recursive: true });
 export class db {
 	static async getGuildData(guildId: string) {
 		await low.read();
-		return low.data!.guilds[guildId] || defaultGuildData;
+		return low.data!.guilds[guildId] || structuredClone(defaultGuildData);
 	}
 
 	static async setGuildData(guildId: string, guildData: Data["guilds"][string]) {
 		await low.read();
-		low.data!.guilds[guildId] = guildData;
+		low.data!.guilds[guildId] = structuredClone(guildData);
 		await low.write();
 	}
 }

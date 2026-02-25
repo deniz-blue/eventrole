@@ -91,7 +91,7 @@ export const SettingsIndex = () => {
 	return (
 		<container>
 			<text>
-				<h2>Guild Settings</h2>
+				<h2>Settings Overview</h2>
 				<br />
 				<b>Event Channels:</b>
 				<EventChannelsList data={data.eventChannels} />
@@ -134,7 +134,7 @@ export const SettingsEventChannels = () => {
 				<row>
 					<select
 						type="string"
-						placeholder="Edit Channel"
+						placeholder="Edit Channel from List"
 						onSelect={(int) => navigate(`/eventChannels/${int.values[0]}`)}
 					>
 						{Object.entries(data.eventChannels).map(([channelId, channelData]) => (
@@ -160,6 +160,7 @@ export const SettingsEventChannels = () => {
 									guildData.eventChannels[channel.id] = { mentionRoleIds: [] };
 									await db.setGuildData(interaction.guildId!, guildData);
 									setMessage(`Added event channel ${channelMention(channel.id)}!`);
+									await interaction.deferUpdate();
 								}}
 							>
 								<label label="Channel" description="Which forum channel to use for events?">
@@ -169,7 +170,7 @@ export const SettingsEventChannels = () => {
 						));
 					}}
 				>
-					Add
+					Add New Event Channel
 				</button>
 			</row>
 		</container>
@@ -191,17 +192,19 @@ export const SettingsEventChannelsChannel = () => {
 		<container>
 			<text>
 				<h2>Event Channel: {channelMention(channelId)}</h2>
-				<b>Current Mention Roles:</b>
+				<b>Current Global Mention Roles:</b>
 				<ul>
 					{data.eventChannels[channelId]?.mentionRoleIds.map(roleId => (
 						<li key={roleId}>{roleMention(roleId)}</li>
 					)) || (<i>None</i>)}
 				</ul>
+				<br />
+				Global mention roles will be pinged for every event posted in this channel.
 			</text>
 			<row>
 				<select
 					type="role"
-					placeholder="Set Mention Roles"
+					placeholder="Set Global Mention Roles for this Channel"
 					defaultValues={data.eventChannels[channelId]?.mentionRoleIds || []}
 					min={0}
 					max={10}

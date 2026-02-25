@@ -1,18 +1,21 @@
-import { roleMention, type ClientEvents } from "discord.js";
+import { roleMention, type AnyThreadChannel, type ClientEvents } from "discord.js";
 import { db } from "../database/db";
 import { tryCatch } from "../util/trynull";
 
 export const onThreadCreate: (...a: ClientEvents["threadCreate"]) => Promise<void> = async (thread, newlyCreated) => {
+	if (!newlyCreated) return;
+
+	return await createRoleForThread(thread);
+};
+
+export const createRoleForThread = async (
+	thread: AnyThreadChannel,
+) => {
 	const guildData = await db.getGuildData(thread.guild.id);
 	const eventChannelData = guildData.eventChannels[thread.parentId!];
 
 	// If the thread's parent channel is not an event channel, ignore it
 	if (!eventChannelData) {
-		return;
-	}
-
-	// If the thread is not newly created, ignore it
-	if (!newlyCreated) {
 		return;
 	}
 
@@ -27,7 +30,7 @@ export const onThreadCreate: (...a: ClientEvents["threadCreate"]) => Promise<voi
 	if (roleCreateError || !role) {
 		console.error(`Failed to create role for thread ${thread.id}:`, roleCreateError);
 		// Show error message
-		thread.send("-# ❌ An error occurred while creating the event role. Please contact an administrator. " + roleCreateError);
+		await thread.send("-# ❌ An error occurred while creating the event role. Please contact an administrator. " + roleCreateError);
 		return;
 	}
 
@@ -45,13 +48,13 @@ export const onThreadCreate: (...a: ClientEvents["threadCreate"]) => Promise<voi
 			if (roleAddError) {
 				console.error(`Failed to assign role to member ${member.id} for thread ${thread.id}:`, roleAddError);
 				// Show error message
-				thread.send("-# ❌ An error occurred while assigning you the event role. Please contact an administrator. " + roleAddError);
+				await thread.send("-# ❌ An error occurred while assigning you the event role. Please contact an administrator. " + roleAddError);
 			}
 		}
 	}
 
 	// Send informal message in the thread
-	thread.send({
-		content: `${eventChannelData.mentionRoleIds.map(roleMention).join(" ")}\n-# Role: ${roleMention(role.id)} (react to thread emoji to get the role)`,
+	await thread.send({
+		content: `${eventChannelData.mentionRoleIds.map(roleMention).join(" ")}\n-# Role: ${roleMention(role.id)} (react to post emoji to get the role)`,
 	});
 };
