@@ -1,4 +1,4 @@
-import { REST, SlashCommandBuilder } from "discord.js";
+import { REST, SlashCommandBuilder, Routes } from "discord.js";
 import { getCommands } from "./commands";
 import "dotenv/config";
 
@@ -20,9 +20,13 @@ const main = async () => {
 		);
 	}
 
+	const global = process.argv.includes("global");
+
 	await api.put(
-		// Replace with your own application ID and guild ID
-		`/applications/${process.env.DISCORD_APP_ID}/guilds/${process.env.DISCORD_GUILD_ID}/commands`,
+		global ? Routes.applicationCommands(process.env.DISCORD_APP_ID!) : Routes.applicationGuildCommands(
+			process.env.DISCORD_APP_ID!,
+			process.env.DISCORD_GUILD_ID!
+		),
 		{ body: data }
 	);
 };
