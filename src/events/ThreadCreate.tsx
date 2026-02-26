@@ -1,25 +1,23 @@
-import { roleMention, type AnyThreadChannel, type ClientEvents } from "discord.js";
-import { db } from "../database/db";
+import { Events, roleMention, type AnyThreadChannel, type ClientEvents } from "discord.js";
 import { tryCatch } from "../util/trynull";
+import { defineEvent } from "../core/event";
+import { useGuildDataStore } from "../database/store";
 
-export const onThreadCreate: (...a: ClientEvents["threadCreate"]) => Promise<void> = async (thread, newlyCreated) => {
-	if (!newlyCreated) return;
+export default defineEvent({
+	name: Events.ThreadCreate,
+	handler: async (thread, newlyCreated) => {
+		if (!newlyCreated) return;
 
-	return await createRoleForThread(thread);
-};
+		return await createRoleForThread(thread);
+	},
+});
 
 export const createRoleForThread = async (
 	thread: AnyThreadChannel,
 ) => {
-	const guildData = await db.getGuildData(thread.guild.id);
-	const eventChannelData = guildData.eventChannels[thread.parentId!];
+	const eventChannel = useGuildDataStore.getState().getEventChannel(thread.guild.id, thread.parentId!);
+	if (!eventChannel) return;
 
-	// If the thread's parent channel is not an event channel, ignore it
-	if (!eventChannelData) {
-		return;
-	}
-
-	// Create a role for the thread
 	const [role, roleCreateError] = await tryCatch(thread.guild.roles.create({
 		name: `Event: ${thread.name}`,
 		mentionable: true,
@@ -29,32 +27,25 @@ export const createRoleForThread = async (
 
 	if (roleCreateError || !role) {
 		console.error(`Failed to create role for thread ${thread.id}:`, roleCreateError);
-		// Show error message
 		await thread.send("-# ❌ An error occurred while creating the event role. Please contact an administrator. " + roleCreateError);
 		return;
 	}
 
-	// Store the role ID in the database
-	guildData.eventThreads[thread.id] = {
-		roleId: role.id,
-	};
-	await db.setGuildData(thread.guild.id, guildData);
+	useGuildDataStore.setState(draft => {
+		draft.guilds[thread.guild.id]!.eventThreads[thread.id] = {
+			roleId: role.id,
+		};
+	});
 
-	// Assign the role to the thread creator
-	if (thread.ownerId) {
-		const member = await thread.guild.members.fetch(thread.ownerId);
-		if (member) {
-			const [_, roleAddError] = await tryCatch(member.roles.add(role, `Assigned event role for thread ${thread.id}`));
-			if (roleAddError) {
-				console.error(`Failed to assign role to member ${member.id} for thread ${thread.id}:`, roleAddError);
-				// Show error message
-				await thread.send("-# ❌ An error occurred while assigning you the event role. Please contact an administrator. " + roleAddError);
-			}
-		}
+	const member = await thread.guild.members.fetch(thread.ownerId);
+	const [_, roleAddError] = await tryCatch(member.roles.add(role, `Assigned event role for thread ${thread.id}`));
+	if (roleAddError) {
+		console.error(`Failed to assign role to member ${member.id} for thread ${thread.id}:`, roleAddError);
+		await thread.send("-# ❌ An error occurred while assigning you the event role. Please contact an administrator. " + roleAddError);
+		// no return
 	}
 
-	// Send informal message in the thread
 	await thread.send({
-		content: `${eventChannelData.mentionRoleIds.map(roleMention).join(" ")}\n-# Role: ${roleMention(role.id)} (react to post emoji to get the role)`,
+		content: `${eventChannel.mentionRoleIds.map(roleMention).join(" ")}\n-# Role: ${roleMention(role.id)} (react to post emoji to get the role)`,
 	});
 };

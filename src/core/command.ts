@@ -8,4 +8,4 @@ export interface Command {
     execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
 };
 
-export const command = (x: Command): Command => x;
+export const defineCommand = (x: Command): Command => x;

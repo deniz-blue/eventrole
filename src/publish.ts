@@ -1,12 +1,11 @@
 import { REST, SlashCommandBuilder, Routes } from "discord.js";
-import { getCommands } from "./commands";
+import { commands } from "./commands";
 import "dotenv/config";
 
 const api = new REST()
 	.setToken(process.env.DISCORD_BOT_TOKEN!);
 
 const main = async () => {
-	const commands = await getCommands();
 	console.log("Publishing commands:", commands.map(cmd => cmd.name));
 
 	const data = [];

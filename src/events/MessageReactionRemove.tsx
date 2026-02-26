@@ -1,33 +1,28 @@
-import { userMention, type ClientEvents } from "discord.js";
-import { db } from "../database/db";
+import { Events, userMention } from "discord.js";
 import { tryCatch } from "../util/trynull";
+import { defineEvent } from "../core/event";
+import { isStarterThreadMessage } from "../logic/checks";
+import { useGuildDataStore } from "../database/store";
 
-export const onMessageReactionRemove: (...a: ClientEvents["messageReactionRemove"]) => Promise<void> = async (reaction, user) => {
-	// Check if the reaction is in a event thread
-	const thread = reaction.message.channel;
-	if (!thread.isThread()) {
-		return;
-	}
+export default defineEvent({
+	name: Events.MessageReactionRemove,
+	handler: async (reaction, user) => {
+		const thread = reaction.message.channel;
 
-	// Check if reaction is on the start message of the thread
-	if (reaction.message.id !== thread.id) {
-		return;
-	}
+		if (!thread.isThread()) return;
+		if (!isStarterThreadMessage(reaction.message)) return;
 
-	// Fetch guild data
-	const guildData = await db.getGuildData(thread.guild.id);
-	const eventThreadData = guildData.eventThreads[thread.id];
-	if (!eventThreadData) {
-		return;
-	}
-	// Remove the role from the user
-	const member = await thread.guild.members.fetch(user.id);
-	if (member) {
-		const [_, roleRemoveError] = await tryCatch(member.roles.remove(eventThreadData.roleId, `Removed event role for removing reaction from thread ${thread.id}`));
+		const eventThread = useGuildDataStore.getState().getEventThread(thread.guild.id, thread.id);
+		if (!eventThread) return;
+
+		const member = await thread.guild.members.fetch(user.id);
+
+		const [_, roleRemoveError] = await tryCatch(member.roles.remove(eventThread.roleId, `Removed event role for removing reaction from thread ${thread.id}`));
+
 		if (roleRemoveError) {
 			console.error(`Failed to remove role from member ${member.id} for removing reaction from thread ${thread.id}:`, roleRemoveError);
 			// Show error message
 			thread.send("-# ❌ An error occurred while removing " + userMention(user.id) + " the event role. Please contact an administrator. " + roleRemoveError);
 		}
-	}
-};
+	},
+});

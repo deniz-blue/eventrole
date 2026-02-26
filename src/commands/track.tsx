@@ -1,50 +1,35 @@
-import { ChannelType } from "discord.js";
-import { command } from "../core/command";
+import { ChannelType, MessageFlags } from "discord.js";
+import { defineCommand } from "../core/command";
 import { createRoleForThread } from "../events/ThreadCreate";
-import { db } from "../database/db";
+import { err } from "../core/err";
+import { isAllowedToManage } from "../logic/checks";
+import { useGuildDataStore } from "../database/store";
 
-export default command({
+export default defineCommand({
 	name: "track",
 	description: {
 		en: "Manually add existing forum post as an event",
 	},
 	execute: async (interaction) => {
-		// Command requires MANAGE_GUILD permission
-		if (!interaction.guild || !interaction.memberPermissions?.has("ManageGuild")) {
-			interaction.reply({
-				content: "You need the Manage Server permission to use this command.",
-				ephemeral: true,
-			});
-			return;
-		}
+		if (!interaction.guild) throw err("❌ This command can only be used in a server.");
+		if (!isAllowedToManage(interaction)) throw err("❌ You are not allowed to use this command.");
+		if (!interaction.channel || (
+			interaction.channel.type !== ChannelType.PublicThread &&
+			interaction.channel.type !== ChannelType.PrivateThread
+		)) throw err("❌ This command can only be used in a thread channel.");
 
-		// Check if the command is used in a thread channel
-		if (!interaction.channel || (interaction.channel.type !== ChannelType.PublicThread && interaction.channel.type !== ChannelType.PrivateThread)) {
-			interaction.reply({
-				content: "This command can only be used in a thread channel.",
-				ephemeral: true,
-			});
-			return;
-		}
-
-		const guildData = await db.getGuildData(interaction.guild.id);
-		if (!guildData.eventChannels[interaction.channel.parentId!]) {
-			interaction.reply({
-				content: "The parent channel of this thread is not registered as an event channel. Please register the parent channel first.",
-				ephemeral: true,
-			});
-			return;
-		}
+		const eventChannel = useGuildDataStore.getState().getEventChannel(interaction.guild.id, interaction.channel.parentId!);
+		if (!eventChannel) throw err("❌ The parent channel of this thread is not registered as an event channel. Please register the parent channel first.");
 
 		await interaction.reply({
-			content: "Manually tracking this thread as an event...",
-			ephemeral: true,
+			content: "⌛ Manually tracking this thread as an event...",
+			flags: [MessageFlags.Ephemeral],
 		});
 
 		await createRoleForThread(interaction.channel);
 
 		await interaction.editReply({
-			content: "This thread is now being tracked as an event.",
+			content: "✅ This thread is now being tracked as an event.",
 		});
 	},
 });

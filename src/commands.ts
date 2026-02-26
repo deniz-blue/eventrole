@@ -1,17 +1,15 @@
-import { readdirSync, type PathLike } from "node:fs";
-import { dirname } from "node:path";
 import type { Command } from "./core/command";
 
-export const importRecursive = async <T>(cwd: PathLike): Promise<T[]> => {
-    const entries = readdirSync(cwd, { withFileTypes: true, recursive: true });
-    const promises = entries.filter((x) => x.isFile()).map(x => {
-        return import("file://" + x.parentPath + "/" + x.name);
-    });
-    const imports = await Promise.all(promises);
-    return imports.map((mod) => mod.default as T);
-};
+export let commands: Command[] = Object.values(
+	import.meta.glob("./commands/**/*.*", { eager: true })
+).map((loader) => (loader as any).default as Command);
 
-const commandsDir = new URL(dirname(import.meta.url) + "/commands");
-export const getCommands = () => {
-    return importRecursive<Command>(commandsDir);
+console.log("Loaded commands: ", commands.map((c) => c.name));
+
+if (import.meta.hot) {
+	import.meta.hot.accept((newModule) => {
+		if (!newModule) return console.error("Failed to load new module for commands");
+		commands = (newModule as any).commands;
+		console.log("Commands reloaded");
+	});
 };
