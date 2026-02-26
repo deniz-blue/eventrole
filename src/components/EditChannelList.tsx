@@ -51,6 +51,7 @@ export const SettingsEventChannels = () => {
 									const channel = interaction.fields.getSelectedChannels("channel")!.at(0)!;
 
 									await useGuildDataStore.setState(draft => {
+										draft.guilds[interaction.guildId!] ??= { eventChannels: {}, eventThreads: {} };
 										draft.guilds[interaction.guildId!]!.eventChannels[channel.id] = { mentionRoleIds: [] };
 									});
 
