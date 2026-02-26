@@ -12,7 +12,7 @@ export const SettingsEventChannelsChannel = () => {
 
 	if (!eventChannel) return (
 		<text>
-			Loading...
+			404 !!
 		</text>
 	);
 

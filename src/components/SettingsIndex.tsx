@@ -5,11 +5,7 @@ import { NavButton } from "./NavButton";
 
 export const SettingsIndex = () => {
 	const interaction = useInteraction();
-	const data = useGuildDataStore(state => state.guilds[interaction!.guildId!]);
-
-	if (!data) {
-		return <text>Loading...</text>;
-	}
+	const data = useGuildDataStore(state => state.guilds[interaction!.guildId!]) ?? { eventChannels: {}, eventThreads: {} };
 
 	return (
 		<container>
