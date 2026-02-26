@@ -5,9 +5,14 @@ export const isStarterThreadMessage = (message: Message | PartialMessage) => {
 };
 
 export const isAllowedToManage = (ctx: GuildMember | ChatInputCommandInteraction) => {
+	let userId = ctx instanceof GuildMember ? ctx.id : ctx.user.id;
+	let app = ctx.client.application;
+	if (app.owner?.id === userId) return true;
+	if (app.owner && "members" in app.owner && app.owner.members.has(userId)) return true;
+
 	if (ctx instanceof GuildMember) {
-		return ctx.permissions.has("ManageGuild") || ctx.id === ctx.client.application.owner?.id;
+		return ctx.permissions.has("ManageGuild");
 	} else {
-		return ctx.memberPermissions?.has("ManageGuild") || ctx.user.id === ctx.client.application.owner?.id;
+		return ctx.memberPermissions?.has("ManageGuild");
 	};
 };
