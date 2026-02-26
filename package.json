@@ -5,9 +5,8 @@
 	"private": true,
 	"scripts": {
 		"dev": "tsx watch vite",
-		"build": "tsx vite",
-		"start": "tsx src/index.ts",
-		"pub": "tsx src/publish.ts"
+		"start": "tsx vite",
+		"pub": "tsx vite publish"
 	},
 	"license": "MIT",
 	"packageManager": "pnpm@10.18.2",

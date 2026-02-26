@@ -32,8 +32,11 @@ const viteServer = await createServer({
 	],
 });
 
+console.log("Vite server is running.");
+
 const serverEnvironment = viteServer.environments.node! as RunnableDevEnvironment;
 
-const index = await serverEnvironment.runner.import("src/index.ts");
+const publish = process.argv.includes("publish") || process.argv.includes("pub");
 
-console.log("Vite server is running.");
+await serverEnvironment.runner.import(publish ? "src/publish.ts" : "src/index.ts");
+
