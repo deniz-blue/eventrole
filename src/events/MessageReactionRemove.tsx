@@ -1,9 +1,9 @@
-import { Events, userMention } from "discord.js";
+import { Events } from "discord.js";
 import { tryCatch } from "../util/trynull";
 import { defineEvent } from "../core/event";
 import { isStarterThreadMessage } from "../logic/checks";
-import { useGuildDataStore } from "../database/store";
 import { logger } from "../util/logger";
+import { handleRoleAssignment } from "../logic/role-assignment";
 
 export default defineEvent({
 	name: Events.MessageReactionRemove,
@@ -24,22 +24,6 @@ export default defineEvent({
 		if (!thread.isThread()) return logger.trace(`Channel ${thread.id} is not a thread, ignoring reaction removal.`);
 		if (!isStarterThreadMessage(reaction.message)) return logger.trace(`Message ${reaction.message.id} in thread ${thread.id} is not a starter message, ignoring reaction removal.`);
 
-		const eventThread = useGuildDataStore.getState().getEventThread(thread.guild.id, thread.id);
-		if (!eventThread) return logger.trace(`Thread ${thread.id} is not an event thread, ignoring reaction removal.`);
-
-		const member = await thread.guild.members.fetch(user.id);
-
-		logger.trace(`Removing role ${eventThread.roleId} from member ${member.id} for removing reaction from thread ${thread.id}.`);
-
-		const [_, roleRemoveError] = await tryCatch(member.roles.remove(eventThread.roleId, `Removed event role for removing reaction from thread ${thread.id}`));
-
-		if (roleRemoveError) {
-			logger.error(roleRemoveError, `Failed to remove role from member ${member.id} for removing reaction from thread ${thread.id}:`);
-			// Show error message
-			thread.send("-# ❌ An error occurred while removing " + userMention(user.id) + " the event role. Please contact an administrator. " + roleRemoveError);
-			return;
-		}
-
-		logger.trace(`Removed role ${eventThread.roleId} from member ${member.id} for removing reaction from thread ${thread.id}.`);
+		handleRoleAssignment("remove", thread, user);
 	},
 });
