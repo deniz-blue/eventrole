@@ -10,7 +10,7 @@ export default defineEvent({
 	handler: async (reaction, user) => {
 		const thread = reaction.message.channel;
 
-		logger.trace(`Received reaction remove by user ${user.id} on message ${reaction.message.id} in channel ${reaction.message.channelId}.`);
+		logger.trace(`MessageReactionRemove user ${user.id} on message ${reaction.message.id} in channel ${reaction.message.channelId}.`);
 
 		if (!thread.isThread()) return logger.trace(`Channel ${thread.id} is not a thread, ignoring reaction removal.`);
 		if (!isStarterThreadMessage(reaction.message)) return logger.trace(`Message ${reaction.message.id} in thread ${thread.id} is not a starter message, ignoring reaction removal.`);
@@ -31,6 +31,6 @@ export default defineEvent({
 			return;
 		}
 
-		logger.trace(`Finished attempting to remove role ${eventThread.roleId} from member ${member.id} for removing reaction from thread ${thread.id}.`);
+		logger.trace(`Removed role ${eventThread.roleId} from member ${member.id} for removing reaction from thread ${thread.id}.`);
 	},
 });

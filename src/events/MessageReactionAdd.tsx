@@ -8,7 +8,7 @@ import { logger } from "../util/logger";
 export default defineEvent({
 	name: Events.MessageReactionAdd,
 	handler: async (reaction, user) => {
-		logger.trace(`Received reaction add by user ${user.id} on message ${reaction.message.id} in channel ${reaction.message.channelId}.`);
+		logger.trace(`MessageReactionAdd user ${user.id} on message ${reaction.message.id} in channel ${reaction.message.channelId}.`);
 
 		const thread = reaction.message.channel;
 
@@ -25,6 +25,9 @@ export default defineEvent({
 		if (roleAddError) {
 			logger.error(roleAddError, `Failed to assign role to member ${member.id} for reacting to thread ${thread.id}:`);
 			thread.send("-# ❌ An error occurred while assigning " + userMention(user.id) + " the event role. Please contact an administrator. " + roleAddError);
+			return;
 		}
+
+		logger.info(`Assigned role ${eventThread.roleId} to member ${member.id} for reacting to thread ${thread.id}.`);
 	},
 });
