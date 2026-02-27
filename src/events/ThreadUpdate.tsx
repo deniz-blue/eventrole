@@ -2,10 +2,19 @@ import { Events, type AnyThreadChannel } from "discord.js";
 import { defineEvent } from "../core/event";
 import { useGuildDataStore } from "../database/store";
 import { logger } from "../util/logger";
+import { tryCatch } from "../util/trynull";
 
 export default defineEvent({
 	name: Events.ThreadUpdate,
 	handler: async (oldThread, newThread) => {
+		if (newThread.partial) {
+			const [_, fetchError] = await tryCatch(newThread.fetch() as Promise<AnyThreadChannel>);
+			if (fetchError) {
+				logger.error(fetchError, `Failed to fetch partial thread ${newThread.id} in guild ${newThread.guild.id}:`);
+				return;
+			}
+		}
+
 		// Archived
 		if (!oldThread.archived && newThread.archived) return await cleanupEventThread(newThread);
 
@@ -19,6 +28,8 @@ export default defineEvent({
 			const role = newThread.guild.roles.cache.get(eventThread.roleId);
 			if (role)
 				await role.setName(`Event: ${newThread.name}`, `Renaming event role for thread ${newThread.id} due to thread name change`);
+			else
+				logger.error(`Role with ID ${eventThread.roleId} for thread ${newThread.id} not found during thread rename handling.`);
 		}
 	},
 });

@@ -21,6 +21,9 @@ export default defineCommand({
 		const eventChannel = useGuildDataStore.getState().getEventChannel(interaction.guild.id, interaction.channel.parentId!);
 		if (!eventChannel) throw err("❌ The parent channel of this thread is not registered as an event channel. Please register the parent channel first.");
 
+		if (useGuildDataStore.getState().getEventThread(interaction.guild.id, interaction.channelId))
+			throw err("❌ This thread is already being tracked as an event.");
+
 		await interaction.reply({
 			content: "⌛ Manually tracking this thread as an event...",
 			flags: [MessageFlags.Ephemeral],

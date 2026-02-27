@@ -9,6 +9,15 @@ export default defineEvent({
 	handler: async (thread, newlyCreated) => {
 		if (!newlyCreated) return logger.trace(`Thread ${thread.id} created but not newly created, skipping role creation.`);
 
+		if (thread.partial) {
+			const [_, fetchError] = await tryCatch(thread.fetch() as Promise<AnyThreadChannel>);
+			if (fetchError) {
+				logger.error(fetchError, `Failed to fetch partial thread ${thread.id} in guild ${thread.guild.id}:`);
+				return;
+			}
+			logger.trace(`Fetched partial thread ${thread.id} in guild ${thread.guild.id}.`);
+		}
+
 		return await createRoleForThread(thread);
 	},
 });
