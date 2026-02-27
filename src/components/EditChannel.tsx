@@ -20,19 +20,18 @@ export const SettingsEventChannelsChannel = () => {
 		<container>
 			<text>
 				<h2>Event Channel: {channelMention(channelId)}</h2>
-				<b>Current Global Mention Roles:</b>
+				<b>Roles to mention on event create:</b>
 				<ul>
 					{eventChannel?.mentionRoleIds.map(roleId => (
 						<li key={roleId}>{roleMention(roleId)}</li>
 					)) || (<i>None</i>)}
 				</ul>
 				<br />
-				Global mention roles will be pinged for every event posted in this channel.
 			</text>
 			<row>
 				<select
 					type="role"
-					placeholder="Set Global Mention Roles for this Channel"
+					placeholder="Set Roles to Mention for this Channel"
 					defaultValues={eventChannel?.mentionRoleIds || []}
 					min={0}
 					max={10}

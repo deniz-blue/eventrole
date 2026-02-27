@@ -24,6 +24,6 @@ export default defineEvent({
 
 		logger.info("Finished caching event threads");
 		await client.application.fetch();
-		logger.info(`Application ID: ${client.application.id}`);
+		logger.trace(`Application ID: ${client.application.id}`);
 	},
 });

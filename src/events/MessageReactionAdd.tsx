@@ -8,13 +8,15 @@ import { logger } from "../util/logger";
 export default defineEvent({
 	name: Events.MessageReactionAdd,
 	handler: async (reaction, user) => {
+		logger.trace(`Received reaction add by user ${user.id} on message ${reaction.message.id} in channel ${reaction.message.channelId}.`);
+
 		const thread = reaction.message.channel;
 
 		if (!thread.isThread()) return logger.trace(`Channel ${thread.id} is not a thread, ignoring reaction.`);
 		if (!isStarterThreadMessage(reaction.message)) return logger.trace(`Message ${reaction.message.id} in thread ${thread.id} is not a starter message, ignoring reaction.`);
 
 		const eventThread = useGuildDataStore.getState().getEventThread(thread.guild.id, thread.id);
-		if (!eventThread) return;
+		if (!eventThread) return logger.trace(`Thread ${thread.id} is not an event thread, ignoring reaction.`);
 
 		const member = await thread.guild.members.fetch(user.id);
 

@@ -70,7 +70,7 @@ export const EventChannelsList = ({ data }: { data: GuildData["eventChannels"] }
 		<ul>
 			{Object.entries(data).map(([channelId, channelData]) => (
 				<li key={channelId}>
-					<mention channel={channelId} />: {(channelData.mentionRoleIds || []).map(roleId => roleMention(roleId)).join(", ") || (<i>None</i>)}
+					<mention channel={channelId} />: {(channelData.mentionRoleIds || []).map(roleId => roleMention(roleId)).join(", ") || (<i>No roles will be mentioned</i>)}
 				</li>
 			))}
 		</ul>
