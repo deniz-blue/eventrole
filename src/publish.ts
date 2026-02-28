@@ -11,12 +11,11 @@ const main = async () => {
 	const data = [];
 
 	for (const command of commands) {
-		data.push(
-			new SlashCommandBuilder()
-				.setName(command.name)
-				.setDescription(command.description["en"] ?? "")
-				.toJSON()
-		);
+		let builder = new SlashCommandBuilder()
+			.setName(command.name)
+			.setDescription(command.description["en"] ?? "");
+		command.modifyBuilder?.(builder);
+		data.push(builder.toJSON());
 	}
 
 	const global = process.argv.includes("global");
