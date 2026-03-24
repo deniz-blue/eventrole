@@ -7,6 +7,7 @@ import { logger } from "../util/logger";
 
 export default defineCommand({
 	name: "settings",
+	type: "slash",
 	description: {
 		en: "Edit guild settings",
 	},

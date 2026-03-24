@@ -1,4 +1,4 @@
-import { REST, SlashCommandBuilder, Routes } from "discord.js";
+import { REST, SlashCommandBuilder, Routes, type RESTPutAPIApplicationCommandsJSONBody, ContextMenuCommandBuilder } from "discord.js";
 import { commands } from "./commands";
 import "dotenv/config";
 
@@ -8,14 +8,20 @@ const api = new REST()
 const main = async () => {
 	console.log("Publishing commands:", commands.map(cmd => cmd.name));
 
-	const data = [];
+	const data: RESTPutAPIApplicationCommandsJSONBody = [];
 
 	for (const command of commands) {
-		let builder = new SlashCommandBuilder()
-			.setName(command.name)
-			.setDescription(command.description["en"] ?? "");
-		command.modifyBuilder?.(builder);
-		data.push(builder.toJSON());
+		if (command.type === "slash") {
+			let builder = new SlashCommandBuilder()
+				.setName(command.name)
+				.setDescription(command.description["en"] ?? "");
+			data.push(builder.toJSON());
+		} else {
+			let builder = new ContextMenuCommandBuilder()
+				.setName(command.name)
+				.setType(command.contextType);
+			data.push(builder.toJSON());
+		}
 	}
 
 	const global = process.argv.includes("global");

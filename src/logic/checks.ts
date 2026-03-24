@@ -1,10 +1,10 @@
-import { ChatInputCommandInteraction, GuildMember, Message, type PartialMessage } from "discord.js";
+import { ChatInputCommandInteraction, ContextMenuCommandInteraction, GuildMember, Message, type PartialMessage } from "discord.js";
 
 export const isStarterThreadMessage = (message: Message | PartialMessage) => {
 	return message.channel.isThread() && message.id === message.channel.id;
 };
 
-export const isAllowedToManage = (ctx: GuildMember | ChatInputCommandInteraction) => {
+export const isAllowedToManage = (ctx: GuildMember | ChatInputCommandInteraction | ContextMenuCommandInteraction) => {
 	let userId = ctx instanceof GuildMember ? ctx.id : ctx.user.id;
 	let app = ctx.client.application;
 	if (app.owner?.id === userId) return true;

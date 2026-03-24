@@ -7,6 +7,7 @@ import { useGuildDataStore } from "../database/store";
 
 export default defineCommand({
 	name: "track",
+	type: "slash",
 	description: {
 		en: "Manually add existing forum post as an event",
 	},

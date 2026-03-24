@@ -11,7 +11,7 @@ export default defineEvent({
 		logger.trace(`Received interaction: ${interaction.type} in guild ${interaction.guildId}`);
 		djsx.dispatchInteraction(interaction);
 
-		if (interaction.isChatInputCommand()) {
+		if (interaction.isChatInputCommand() || interaction.isContextMenuCommand()) {
 			const command = commands.find(cmd => cmd.name === interaction.commandName);
 
 			if (!command) {
@@ -24,7 +24,7 @@ export default defineEvent({
 
 			try {
 				logger.trace(`Executing command ${command.name} for interaction in guild ${interaction.guildId} by user ${interaction.user.id}`);
-				await command.execute(interaction);
+				await command.execute(interaction as any);
 				logger.trace(`Finished executing command ${command.name} for interaction in guild ${interaction.guildId} by user ${interaction.user.id}`);
 			} catch (obj) {
 				if (obj instanceof ErrClass) {
