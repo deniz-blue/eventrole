@@ -60,10 +60,6 @@ export const createRoleForThread = async (
 	logger.info(`Created role ${role.id} for thread ${thread.id} and assigned to member ${member.id}.`);
 
 	await thread.send({
-		content: `${eventChannel.mentionRoleIds.map(roleMention).join(" ")}\n-# Role: ${roleMention(role.id)} (react to first message (${messageLink(
-			thread.guildId,
-			thread.id,
-			thread.id,
-		)}) to get the role)`,
+		content: `${eventChannel.mentionRoleIds.map(roleMention).join(" ")}\n-# Role created: ${roleMention(role.id)}\n-# React with any emoji to the **first message above** to get the role`,
 	});
 };
