@@ -1,4 +1,4 @@
-import { ChannelType, messageLink } from "discord.js";
+import { ChannelType, MessageFlags, messageLink } from "discord.js";
 import { defineCommand } from "../core/command";
 import { err } from "../core/err";
 
@@ -15,7 +15,8 @@ export default defineCommand({
 			interaction.channel.type !== ChannelType.PrivateThread
 		)) throw err("❌ This command can only be used in a thread channel.");
 
-		await interaction.editReply({
+		await interaction.reply({
+			flags: [MessageFlags.Ephemeral],
 			content: `${messageLink(
 				interaction.channelId,
 				interaction.channelId,
