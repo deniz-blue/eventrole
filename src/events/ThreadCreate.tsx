@@ -49,17 +49,28 @@ export const createRoleForThread = async (
 		};
 	});
 
-	const member = await thread.guild.members.fetch(thread.ownerId);
-	const [_, roleAddError] = await tryCatch(member.roles.add(role, `Assigned event role for thread ${thread.id}`));
-	if (roleAddError) {
-		logger.error(roleAddError, `Failed to assign role to member ${member.id} for thread ${thread.id}:`);
-		await thread.send("-# ❌ An error occurred while assigning you the event role. Please contact an administrator. " + roleAddError);
-		// no return
-	}
-
-	logger.info(`Created role ${role.id} for thread ${thread.id} and assigned to member ${member.id}.`);
+	logger.info(`Created role ${role.id} for thread ${thread.id}`);
 
 	await thread.send({
 		content: `${eventChannel.mentionRoleIds.map(roleMention).join(" ")}\n-# Role created: ${roleMention(role.id)}\n-# React with any emoji to the **first message above** to get the role`,
 	});
+
+	const firstMessage = await thread.messages.fetch(thread.id);
+	if (!firstMessage) {
+		logger.error(`Failed to fetch first message of thread ${thread.id} for reaction role setup.`);
+		await thread.send("-# ⚠️ Pinning first message failed.");
+		return;
+	}
+
+	await firstMessage.pin(`my reason is meow`);
+
+	const member = await thread.guild.members.fetch(thread.ownerId);
+	const [_, roleAddError] = await tryCatch(member.roles.add(role, `Assigned event role for thread ${thread.id}`));
+	if (roleAddError) {
+		logger.error(roleAddError, `Failed to assign role to member ${member.id} for thread ${thread.id}:`);
+		await thread.send("-# ⚠️ I could not give the role to the event host: " + roleAddError);
+		// no return
+	} else {
+		logger.info(`Assigned role ${role.id} to member ${member.id} for thread ${thread.id}.`);
+	}
 };
