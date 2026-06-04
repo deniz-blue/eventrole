@@ -8,22 +8,24 @@ import { handleRoleAssignment } from "../logic/role-assignment";
 export default defineEvent({
 	name: Events.MessageReactionAdd,
 	handler: async (reaction, user) => {
+		const tracePreamble = `MESSAGE=${reaction.message.id} CHANNEL=${reaction.message.channelId} USER=${user.id} REACT=${reaction.emoji.name}`;
+
 		if (reaction.partial) {
 			const [_, fetchError] = await tryCatch(reaction.fetch());
 			if (fetchError)
-				return logger.error(fetchError, `Failed to fetch partial reaction for message ${reaction.message.id} in channel ${reaction.message.channelId}:`);
-			logger.trace(`Fetched partial reaction for message ${reaction.message.id} in channel ${reaction.message.channelId}.`);
+				return logger.error(fetchError, `${tracePreamble} PARTIAL_FETCH_ERROR`);
+			logger.trace(`${tracePreamble} PARTIAL_FETCH_SUCCESS`);
+		} else {
+			logger.trace(`${tracePreamble} EVENT_RECEIVED`);
 		}
-
-		logger.trace(`MessageReactionAdd user ${user.id} on message ${reaction.message.id} in channel ${reaction.message.channelId}.`);
 
 		const thread = reaction.message.channel;
 		const message = reaction.message;
 
-		if (!thread.isThread()) return logger.trace(`Channel ${thread.id} is not a thread, ignoring reaction.`);
+		if (!thread.isThread()) return logger.trace(`${tracePreamble} NOT_THREAD`);
 
 		if (isStarterThreadMessage(message))
 			handleRoleAssignment("add", thread, user);
-		else logger.trace(`Message ${message?.id} in thread ${thread.id} is not a starter message, ignoring reaction.`);
+		else logger.trace(`${tracePreamble} NOT_STARTER_MESSAGE`);
 	},
 });

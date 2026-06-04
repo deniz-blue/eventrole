@@ -8,18 +8,20 @@ export const handleRoleAssignment = async (
 	thread: AnyThreadChannel,
 	user: User | PartialUser,
 ) => {
+	const tracePreamble = `THREAD=${thread.id} USER=${user.id} ACTION=${action}`;
+
 	const eventThread = useGuildDataStore.getState().getEventThread(thread.guild.id, thread.id);
-	if (!eventThread) return logger.trace(`Thread ${thread.id} is not an event thread, ignoring reaction.`);
+	if (!eventThread) return logger.trace(`${tracePreamble} NOT_EVENT_THREAD`);
 
 	const member = await thread.guild.members.fetch(user.id);
 
 	const [_, err] = await tryCatch(member.roles[action](eventThread.roleId, `${action === "add" ? "Added" : "Removed"} event role for reacting to thread ${thread.id}`));
 
 	if (err) {
-		logger.error(err, `Failed to assign role to member ${member.id} for reacting to thread ${thread.id}:`);
+		logger.error(err, `${tracePreamble} ROLE_ASSIGNMENT_ERROR`);
 		thread.send("-# ❌ An error occurred while assigning " + userMention(user.id) + " the event role. Please contact an administrator. " + err);
 		return;
 	}
 
-	logger.info(`${action === "add" ? "Added" : "Removed"} role ${eventThread.roleId} to member ${member.id} for reacting to thread ${thread.id}.`);
+	logger.info(`${tracePreamble} ROLE_ASSIGNMENT_SUCCESS`);
 };

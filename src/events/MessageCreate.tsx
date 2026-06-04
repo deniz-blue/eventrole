@@ -14,17 +14,15 @@ export default defineEvent({
 			message.channel.type !== ChannelType.PrivateThread
 		)) return;
 
-		logger.info(`Message ${message.id} in thread ${message.channel.id} mentions roles: ${message.mentions.roles.map(r => r.id).join(", ")}`);
-
 		const eventThread = useGuildDataStore.getState().getEventThread(message.guild.id, message.channel.id);
-		if (!eventThread) return logger.trace(`Message ${message.id} in thread ${message.channel.id} mentions roles but the thread is not registered as an event thread, skipping.`);
+		if (!eventThread) return logger.trace(`MENTION MESSAGE=${message.id} THREAD=${message.channel.id} NOT_EVENT_THREAD`);
 
 		if (message.mentions.roles.has(eventThread.roleId)) {
-			logger.info(`Message ${message.id} in thread ${message.channel.id} mentions the event role, pinning the message.`);
 			await message.pin(`Pinned because it mentions the event role.`);
+			logger.info(`MENTION MESSAGE=${message.id} THREAD=${message.channel.id} PINNED`);
 			return;
 		}
 
-		logger.info(`Message ${message.id} in thread ${message.channel.id} mentions roles but does not mention the event role, skipping pinning.`);
+		logger.info(`MENTION MESSAGE=${message.id} THREAD=${message.channel.id} IGNORED_NOT_MENTIONING_EVENT_ROLE`);
 	},
 });
