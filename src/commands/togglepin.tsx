@@ -1,6 +1,6 @@
 import { defineCommand } from "../core/command";
 import { err } from "../core/err";
-import { isAllowedToManage } from "../logic/checks";
+import { canManagePins, isAllowedToManage } from "../logic/checks";
 import { ApplicationCommandType } from "discord.js";
 
 export default defineCommand({
@@ -12,10 +12,15 @@ export default defineCommand({
 	},
 	execute: async (interaction) => {
 		if (!interaction.guild) throw err("❌ This command can only be used in a server.");
-		if (!isAllowedToManage(interaction)) throw err("❌ You are not allowed to use this command.");
+		if (!interaction.targetMessage.channel.isThread()) throw err("❌ This command can only be used in a thread channel.");
+		if (!canManagePins({
+			channel: interaction.targetMessage.channel,
+			user: interaction.user,
+			client: interaction.client,
+		})) throw err("❌ You are not allowed to manage pins in this thread.");
 
 		const isPinned = interaction.targetMessage.pinned;
-		if(isPinned)
+		if (isPinned)
 			await interaction.targetMessage.unpin();
 		else
 			await interaction.targetMessage.pin();
