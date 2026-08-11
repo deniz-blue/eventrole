@@ -1,9 +1,4 @@
-import {
-	User,
-	userMention,
-	type AnyThreadChannel,
-	type PartialUser,
-} from "discord.js";
+import { User, userMention, type AnyThreadChannel, type PartialUser } from "discord.js";
 import { logger } from "../util/logger";
 import { useGuildDataStore } from "../database/store";
 import { tryCatch } from "../util/trynull";

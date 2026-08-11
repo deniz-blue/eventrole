@@ -1,8 +1,4 @@
-import {
-	Events,
-	roleMention,
-	type AnyThreadChannel,
-} from "discord.js";
+import { Events, roleMention, type AnyThreadChannel } from "discord.js";
 import { tryCatch } from "../util/trynull";
 import { defineEvent } from "../core/event";
 import { useGuildDataStore } from "../database/store";
