@@ -19,6 +19,7 @@ export default defineCommand({
 				channel: interaction.targetMessage.channel,
 				user: interaction.user,
 				client: interaction.client,
+				member: interaction.member,
 			})
 		)
 			throw err("❌ You are not allowed to manage pins in this thread.");

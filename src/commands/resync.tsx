@@ -1,7 +1,7 @@
-import { ChannelType, MessageFlags } from "discord.js";
+import { MessageFlags } from "discord.js";
 import { defineCommand } from "../core/command";
 import { err } from "../core/err";
-import { isAllowedToManage } from "../logic/checks";
+import { canManageThread } from "../logic/checks";
 import { useGuildDataStore } from "../database/store";
 import { logger } from "../util/logger";
 import { tryCatch } from "../util/trynull";
@@ -14,13 +14,7 @@ export default defineCommand({
 	},
 	execute: async (interaction) => {
 		if (!interaction.guild) throw err("❌ This command can only be used in a server.");
-		if (!isAllowedToManage(interaction)) throw err("❌ You are not allowed to use this command.");
-		if (
-			!interaction.channel ||
-			(interaction.channel.type !== ChannelType.PublicThread &&
-				interaction.channel.type !== ChannelType.PrivateThread)
-		)
-			throw err("❌ This command can only be used in a thread channel.");
+		if (!canManageThread(interaction)) throw err("❌ You are not allowed to use this command.");
 
 		const eventChannel = useGuildDataStore
 			.getState()
