@@ -1,6 +1,6 @@
 import { defineCommand } from "../core/command";
 import { err } from "../core/err";
-import { canManagePins, isAllowedToManage } from "../logic/checks";
+import { canManagePins } from "../logic/checks";
 import { ApplicationCommandType } from "discord.js";
 
 export default defineCommand({

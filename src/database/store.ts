@@ -32,12 +32,12 @@ export interface GuildDataActions {
 const version = 0;
 const adapter = new JSONFileSync("./.data/db.json");
 const storage: PersistStorage<any> = {
-	getItem: (key) => ({
+	getItem: (_key) => ({
 		state: adapter.read() ?? null,
 		version,
 	}),
-	setItem: (key, { state }) => adapter.write(state),
-	removeItem: (key) => {},
+	setItem: (_key, { state }) => adapter.write(state),
+	removeItem: (_key) => {},
 };
 
 export const useGuildDataStore = create<GuildDataState & GuildDataActions>()(

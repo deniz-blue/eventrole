@@ -2,10 +2,8 @@ import type { Translations } from "@evnt/schema";
 import type {
 	ApplicationCommandType,
 	ChatInputCommandInteraction,
-	ContextMenuCommandInteraction,
 	ContextMenuCommandType,
 	MessageContextMenuCommandInteraction,
-	SlashCommandBuilder,
 	UserContextMenuCommandInteraction,
 } from "discord.js";
 

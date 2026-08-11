@@ -1,7 +1,5 @@
 import {
-	ChatInputCommandInteraction,
 	Client,
-	ContextMenuCommandInteraction,
 	GuildMember,
 	Message,
 	User,

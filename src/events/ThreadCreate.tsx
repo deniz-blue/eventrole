@@ -1,9 +1,7 @@
 import {
 	Events,
-	messageLink,
 	roleMention,
 	type AnyThreadChannel,
-	type ClientEvents,
 } from "discord.js";
 import { tryCatch } from "../util/trynull";
 import { defineEvent } from "../core/event";

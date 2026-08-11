@@ -2,7 +2,6 @@ import {
 	User,
 	userMention,
 	type AnyThreadChannel,
-	type Message,
 	type PartialUser,
 } from "discord.js";
 import { logger } from "../util/logger";

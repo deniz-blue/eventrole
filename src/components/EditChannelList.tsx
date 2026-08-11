@@ -35,7 +35,7 @@ export const SettingsEventChannels = () => {
 						placeholder="Edit Channel from List"
 						onSelect={(int) => navigate(`/eventChannels/${int.values[0]}`)}
 					>
-						{Object.entries(data.eventChannels).map(([channelId, channelData]) => (
+						{Object.entries(data.eventChannels).map(([channelId, _channelData]) => (
 							<option
 								label={interaction?.guild?.channels.cache.get(channelId)?.name || channelId}
 								key={channelId}

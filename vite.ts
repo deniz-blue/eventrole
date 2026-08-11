@@ -3,10 +3,10 @@ import react from "@vitejs/plugin-react";
 
 globalThis.window = globalThis as any;
 
-const PROD =
-	process.env.NODE_ENV === "production" ||
-	process.env.VITE_MODE === "production" ||
-	process.argv.includes("prod");
+// const PROD =
+// 	process.env.NODE_ENV === "production" ||
+// 	process.env.VITE_MODE === "production" ||
+// 	process.argv.includes("prod");
 
 const viteServer = await createServer({
 	appType: "custom",
