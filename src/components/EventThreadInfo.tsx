@@ -1,10 +1,6 @@
 import { roleMention, type Snowflake } from "discord.js";
 
-export const EventThreadInfo = ({
-	roleId,
-}: {
-	roleId: Snowflake;
-}) => {
+export const EventThreadInfo = ({ roleId }: { roleId: Snowflake }) => {
 	return (
 		<message>
 			<container>

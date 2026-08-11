@@ -1,16 +1,23 @@
 import type { Snowflake } from "discord.js";
 import { create } from "zustand";
-import { JSONFileSync } from "lowdb/node"
+import { JSONFileSync } from "lowdb/node";
 import { type PersistStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 export interface GuildData {
-	eventChannels: Record<Snowflake, {
-		mentionRoleIds: Snowflake[];
-	}>;
-	eventThreads: Record<Snowflake, {
-		roleId: Snowflake;
-	}>;
+	eventChannels: Record<
+		Snowflake,
+		{
+			mentionRoleIds: Snowflake[];
+		}
+	>;
+	eventThreads: Record<
+		Snowflake,
+		{
+			roleId: Snowflake;
+			openevnt?: { type: "external"; url: string } | { type: "folio"; id: string; token: string };
+		}
+	>;
 }
 
 export interface GuildDataState {
@@ -30,7 +37,7 @@ const storage: PersistStorage<any> = {
 		version,
 	}),
 	setItem: (key, { state }) => adapter.write(state),
-	removeItem: (key) => { },
+	removeItem: (key) => {},
 };
 
 export const useGuildDataStore = create<GuildDataState & GuildDataActions>()(
@@ -51,5 +58,5 @@ export const useGuildDataStore = create<GuildDataState & GuildDataActions>()(
 			name: "db.json",
 			storage,
 		},
-	)
+	),
 );

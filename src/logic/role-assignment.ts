@@ -1,4 +1,10 @@
-import { User, userMention, type AnyThreadChannel, type Message, type PartialUser } from "discord.js";
+import {
+	User,
+	userMention,
+	type AnyThreadChannel,
+	type Message,
+	type PartialUser,
+} from "discord.js";
 import { logger } from "../util/logger";
 import { useGuildDataStore } from "../database/store";
 import { tryCatch } from "../util/trynull";
@@ -15,11 +21,21 @@ export const handleRoleAssignment = async (
 
 	const member = await thread.guild.members.fetch(user.id);
 
-	const [_, err] = await tryCatch(member.roles[action](eventThread.roleId, `${action === "add" ? "Added" : "Removed"} event role for reacting to thread ${thread.id}`));
+	const [_, err] = await tryCatch(
+		member.roles[action](
+			eventThread.roleId,
+			`${action === "add" ? "Added" : "Removed"} event role for reacting to thread ${thread.id}`,
+		),
+	);
 
 	if (err) {
 		logger.error(err, `${tracePreamble} ROLE_ASSIGNMENT_ERROR`);
-		thread.send("-# ❌ An error occurred while assigning " + userMention(user.id) + " the event role. Please contact an administrator. " + err);
+		thread.send(
+			"-# ❌ An error occurred while assigning " +
+				userMention(user.id) +
+				" the event role. Please contact an administrator. " +
+				err,
+		);
 		return;
 	}
 

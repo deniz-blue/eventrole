@@ -12,8 +12,7 @@ export default defineEvent({
 
 		if (reaction.partial) {
 			const [_, fetchError] = await tryCatch(reaction.fetch());
-			if (fetchError)
-				return logger.error(fetchError, `${tracePreamble} PARTIAL_FETCH_ERROR`);
+			if (fetchError) return logger.error(fetchError, `${tracePreamble} PARTIAL_FETCH_ERROR`);
 			logger.trace(`${tracePreamble} PARTIAL_FETCH_SUCCESS`);
 		} else {
 			logger.trace(`${tracePreamble} EVENT_RECEIVED`);
@@ -24,8 +23,7 @@ export default defineEvent({
 
 		if (!thread.isThread()) return logger.trace(`${tracePreamble} NOT_THREAD`);
 
-		if (isStarterThreadMessage(message))
-			handleRoleAssignment("add", thread, user);
+		if (isStarterThreadMessage(message)) handleRoleAssignment("add", thread, user);
 		else logger.trace(`${tracePreamble} NOT_STARTER_MESSAGE`);
 	},
 });

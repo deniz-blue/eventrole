@@ -1,21 +1,15 @@
 {
 	"name": "bot",
+	"private": true,
+	"license": "MIT",
 	"type": "module",
 	"main": "index.js",
-	"private": true,
 	"scripts": {
 		"dev": "tsx watch vite",
 		"start": "tsx vite",
-		"pub": "tsx vite publish"
-	},
-	"license": "MIT",
-	"packageManager": "pnpm@10.18.2",
-	"devDependencies": {
-		"@types/node": "^25.1.0",
-		"@types/react": "npm:pure-react-types@^0.1.4",
-		"tsx": "^4.21.0",
-		"typescript": "^5.9.3",
-		"vite": "8.0.2"
+		"pub": "tsx vite publish",
+		"lint": "oxlint",
+		"fmt": "oxfmt"
 	},
 	"dependencies": {
 		"@evnt/schema": "^0.0.2",
@@ -30,5 +24,15 @@
 		"react": "^19.2.4",
 		"react-router": "^7.13.0",
 		"zustand": "^5.0.11"
-	}
+	},
+	"devDependencies": {
+		"@types/node": "^25.1.0",
+		"@types/react": "npm:pure-react-types@^0.1.4",
+		"oxfmt": "^0.63.0",
+		"oxlint": "^1.78.0",
+		"tsx": "^4.21.0",
+		"typescript": "^5.9.3",
+		"vite": "8.0.2"
+	},
+	"packageManager": "pnpm@10.18.2"
 }

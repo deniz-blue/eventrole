@@ -15,15 +15,24 @@ export default defineCommand({
 	execute: async (interaction) => {
 		if (!interaction.guild) throw err("❌ This command can only be used in a server.");
 		if (!isAllowedToManage(interaction)) throw err("❌ You are not allowed to use this command.");
-		if (!interaction.channel || (
-			interaction.channel.type !== ChannelType.PublicThread &&
-			interaction.channel.type !== ChannelType.PrivateThread
-		)) throw err("❌ This command can only be used in a thread channel.");
+		if (
+			!interaction.channel ||
+			(interaction.channel.type !== ChannelType.PublicThread &&
+				interaction.channel.type !== ChannelType.PrivateThread)
+		)
+			throw err("❌ This command can only be used in a thread channel.");
 
-		const eventChannel = useGuildDataStore.getState().getEventChannel(interaction.guild.id, interaction.channel.parentId!);
-		if (!eventChannel) throw err("❌ The parent channel of this thread is not registered as an event channel. Please register the parent channel first.");
+		const eventChannel = useGuildDataStore
+			.getState()
+			.getEventChannel(interaction.guild.id, interaction.channel.parentId!);
+		if (!eventChannel)
+			throw err(
+				"❌ The parent channel of this thread is not registered as an event channel. Please register the parent channel first.",
+			);
 
-		const eventThread = useGuildDataStore.getState().getEventThread(interaction.guild.id, interaction.channelId);
+		const eventThread = useGuildDataStore
+			.getState()
+			.getEventThread(interaction.guild.id, interaction.channelId);
 		if (!eventThread) throw err("❌ This thread is not registered as an event thread.");
 
 		const firstMessage = await interaction.channel.messages.fetch(interaction.channelId);
@@ -42,20 +51,27 @@ export default defineCommand({
 
 		for (const reaction of reactions.values()) {
 			const users = await reaction.users.fetch();
-			users.forEach(user => allUserIds.add(user.id));
+			users.forEach((user) => allUserIds.add(user.id));
 		}
 
 		const guildMembers = await interaction.guild.members.fetch({ user: [...allUserIds] });
-		const membersToAddRole = guildMembers.filter(member => !member.roles.cache.has(role.id));
+		const membersToAddRole = guildMembers.filter((member) => !member.roles.cache.has(role.id));
 		const errors = [];
 
 		for (const member of membersToAddRole.values()) {
-			const [_, roleAddError] = await tryCatch(member.roles.add(role, `Resyncing event role for thread ${interaction.channelId}`));
+			const [_, roleAddError] = await tryCatch(
+				member.roles.add(role, `Resyncing event role for thread ${interaction.channelId}`),
+			);
 			if (roleAddError) {
-				logger.error(roleAddError, `Failed to assign role to member ${member.id} during resync for thread ${interaction.channelId}:`);
+				logger.error(
+					roleAddError,
+					`Failed to assign role to member ${member.id} during resync for thread ${interaction.channelId}:`,
+				);
 				errors.push(roleAddError);
 			} else {
-				logger.info(`Assigned role ${role.id} to member ${member.id} during resync for thread ${interaction.channelId}.`);
+				logger.info(
+					`Assigned role ${role.id} to member ${member.id} during resync for thread ${interaction.channelId}.`,
+				);
 			}
 		}
 
@@ -64,7 +80,7 @@ export default defineCommand({
 		const untouchedAmount = allUserIds.size - membersToAddRole.size;
 
 		await interaction.editReply({
-			content: `✅ Resync complete! Assigned role to ${assignedAmount} members, ${untouchedAmount} members were already in sync, ${errorAmount} errors occurred.\n${errors.length > 0 ? "Errors:\n- " + errors.map(e => ""+e).join("\n- ") : ""}`,
+			content: `✅ Resync complete! Assigned role to ${assignedAmount} members, ${untouchedAmount} members were already in sync, ${errorAmount} errors occurred.\n${errors.length > 0 ? "Errors:\n- " + errors.map((e) => "" + e).join("\n- ") : ""}`,
 		});
 	},
 });

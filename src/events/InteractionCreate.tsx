@@ -12,7 +12,7 @@ export default defineEvent({
 		djsx.dispatchInteraction(interaction);
 
 		if (interaction.isChatInputCommand() || interaction.isContextMenuCommand()) {
-			const command = commands.find(cmd => cmd.name === interaction.commandName);
+			const command = commands.find((cmd) => cmd.name === interaction.commandName);
 
 			if (!command) {
 				logger.error(`No command found for ${interaction.commandName}`);
@@ -20,12 +20,16 @@ export default defineEvent({
 					content: "Command not found. Please report this.",
 				});
 				return;
-			};
+			}
 
 			try {
-				logger.trace(`Executing command ${command.name} for interaction in guild ${interaction.guildId} by user ${interaction.user.id}`);
+				logger.trace(
+					`Executing command ${command.name} for interaction in guild ${interaction.guildId} by user ${interaction.user.id}`,
+				);
 				await command.execute(interaction as any);
-				logger.trace(`Finished executing command ${command.name} for interaction in guild ${interaction.guildId} by user ${interaction.user.id}`);
+				logger.trace(
+					`Finished executing command ${command.name} for interaction in guild ${interaction.guildId} by user ${interaction.user.id}`,
+				);
 			} catch (obj) {
 				if (obj instanceof ErrClass) {
 					logger.warn(obj, "Replying with custom error message");
@@ -39,7 +43,7 @@ export default defineEvent({
 							content: obj.payload,
 							flags: [MessageFlags.Ephemeral],
 						});
-					};
+					}
 				} else {
 					logger.error(obj, "Error executing command");
 					interaction.reply({
@@ -50,4 +54,3 @@ export default defineEvent({
 		}
 	},
 });
-

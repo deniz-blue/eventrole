@@ -11,15 +11,26 @@ export default defineCommand({
 	},
 	async execute(interaction) {
 		if (!interaction.guild) throw err("❌ This command can only be used in a server.");
-		if (!interaction.channel?.isThread()) throw err("❌ This command can only be used in a thread.");
+		if (!interaction.channel?.isThread())
+			throw err("❌ This command can only be used in a thread.");
 		if (!isAllowedToManage(interaction)) throw err("❌ You are not allowed to use this command.");
 
 		if (
-			!useGuildDataStore.getState().getEventChannel(interaction.guild.id, interaction.channel.parentId!)
-		) throw err("❌ The parent channel of this thread is not registered as an event channel. Please register the parent channel first.");
+			!useGuildDataStore
+				.getState()
+				.getEventChannel(interaction.guild.id, interaction.channel.parentId!)
+		)
+			throw err(
+				"❌ The parent channel of this thread is not registered as an event channel. Please register the parent channel first.",
+			);
 
-		const roleId = useGuildDataStore.getState().getEventThread(interaction.guild.id, interaction.channel.id)?.roleId;
-		if (!roleId) throw err("❌ This thread is not registered as an event thread. Please register this thread first.");
+		const roleId = useGuildDataStore
+			.getState()
+			.getEventThread(interaction.guild.id, interaction.channel.id)?.roleId;
+		if (!roleId)
+			throw err(
+				"❌ This thread is not registered as an event thread. Please register this thread first.",
+			);
 
 		await interaction.reply({
 			content: `-# <@&${roleId}>`,

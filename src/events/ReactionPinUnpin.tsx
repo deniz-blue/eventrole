@@ -14,8 +14,7 @@ export default defineEvent({
 
 		if (reaction.partial) {
 			const [_, fetchError] = await tryCatch(reaction.fetch());
-			if (fetchError)
-				return logger.error(fetchError, `${tracePreamble} PARTIAL_FETCH_ERROR`);
+			if (fetchError) return logger.error(fetchError, `${tracePreamble} PARTIAL_FETCH_ERROR`);
 			logger.trace(`${tracePreamble} PARTIAL_FETCH_SUCCESS`);
 		}
 
@@ -29,11 +28,13 @@ export default defineEvent({
 		if (isPin && reaction.message.pinned)
 			return logger.trace(`${tracePreamble} IGNORE_ALREADY_${isPin ? "PINNED" : "UNPINNED"}`);
 
-		if (!canManagePins({
-			channel: reaction.message.channel,
-			user,
-			client: reaction.message.client,
-		})) {
+		if (
+			!canManagePins({
+				channel: reaction.message.channel,
+				user,
+				client: reaction.message.client,
+			})
+		) {
 			logger.warn(`${tracePreamble} FAILED_PERMISSION_CHECK`);
 			return;
 		}

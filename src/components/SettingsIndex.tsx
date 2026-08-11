@@ -5,7 +5,10 @@ import { NavButton } from "./NavButton";
 
 export const SettingsIndex = () => {
 	const interaction = useInteraction();
-	const data = useGuildDataStore(state => state.guilds[interaction!.guildId!]) ?? { eventChannels: {}, eventThreads: {} };
+	const data = useGuildDataStore((state) => state.guilds[interaction!.guildId!]) ?? {
+		eventChannels: {},
+		eventThreads: {},
+	};
 
 	return (
 		<container>
@@ -18,9 +21,9 @@ export const SettingsIndex = () => {
 				<br />
 				<b>Active Threads:</b>
 				<br />
-				{Object.keys(data.eventThreads).map(threadId => (
+				{Object.keys(data.eventThreads).map((threadId) => (
 					<mention channel={threadId} key={threadId} />
-				)) || (<i>None</i>)}
+				)) || <i>None</i>}
 			</text>
 			<row>
 				<NavButton to="eventChannels">Edit Event Channels</NavButton>
@@ -28,5 +31,3 @@ export const SettingsIndex = () => {
 		</container>
 	);
 };
-
-

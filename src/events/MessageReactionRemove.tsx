@@ -24,7 +24,8 @@ export default defineEvent({
 		const thread = reaction.message.channel;
 
 		if (!thread.isThread()) return logger.trace(`${tracePreamble} NOT_THREAD`);
-		if (!isStarterThreadMessage(reaction.message)) return logger.trace(`${tracePreamble} NOT_STARTER_MESSAGE`);
+		if (!isStarterThreadMessage(reaction.message))
+			return logger.trace(`${tracePreamble} NOT_STARTER_MESSAGE`);
 
 		handleRoleAssignment("remove", thread, user);
 	},

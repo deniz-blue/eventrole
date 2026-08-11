@@ -41,7 +41,7 @@ export const Settings = () => {
 							Component: SettingsEventChannelsChannel,
 						},
 					],
-				}
+				},
 			])}
 		/>
 	);
@@ -57,7 +57,9 @@ export const SettingsLayout = () => {
 			</text>
 			{location.pathname !== "/" && (
 				<row>
-					<NavButton to=".." style="secondary">Back</NavButton>
+					<NavButton to=".." style="secondary">
+						Back
+					</NavButton>
 				</row>
 			)}
 			<Outlet />
@@ -70,7 +72,10 @@ export const EventChannelsList = ({ data }: { data: GuildData["eventChannels"] }
 		<ul>
 			{Object.entries(data).map(([channelId, channelData]) => (
 				<li key={channelId}>
-					<mention channel={channelId} />: {(channelData.mentionRoleIds || []).map(roleId => roleMention(roleId)).join(", ") || (<i>No roles will be mentioned</i>)}
+					<mention channel={channelId} />:{" "}
+					{(channelData.mentionRoleIds || []).map((roleId) => roleMention(roleId)).join(", ") || (
+						<i>No roles will be mentioned</i>
+					)}
 				</li>
 			))}
 		</ul>

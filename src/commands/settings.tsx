@@ -15,7 +15,9 @@ export default defineCommand({
 		if (!interaction.guild) throw err("❌ This command can only be used in a server.");
 		if (!isAllowedToManage(interaction)) throw err("❌ You are not allowed to use this command.");
 
-		logger.info(`User ${interaction.user.id} is accessing settings in guild ${interaction.guild.id}.`);
+		logger.info(
+			`User ${interaction.user.id} is accessing settings in guild ${interaction.guild.id}.`,
+		);
 
 		djsx.createMessage(interaction, <Settings />);
 	},

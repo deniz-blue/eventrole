@@ -5,6 +5,7 @@ Discord bot designed for a Specific Purpose™️
 ## Instructions
 
 Skip to section:
+
 - [Event Organizers](#event-organizers)
 - [Server Administrators](#server-administrators)
 

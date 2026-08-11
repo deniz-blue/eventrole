@@ -11,12 +11,8 @@ export default defineCommand({
 		djsx.createMessage(
 			interaction,
 			<message ephemeral>
-				<button
-					url="https://github.com/deniz-blue/eventrole#instructions"
-				>
-					View Manual
-				</button>
-			</message>
+				<button url="https://github.com/deniz-blue/eventrole#instructions">View Manual</button>
+			</message>,
 		);
 	},
 });

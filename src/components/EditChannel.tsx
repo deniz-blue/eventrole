@@ -8,13 +8,11 @@ export const SettingsEventChannelsChannel = () => {
 	const params = useParams();
 	const channelId = params.channelId!;
 
-	const eventChannel = useGuildDataStore(state => state.guilds[guildId]?.eventChannels[channelId]);
-
-	if (!eventChannel) return (
-		<text>
-			404 !!
-		</text>
+	const eventChannel = useGuildDataStore(
+		(state) => state.guilds[guildId]?.eventChannels[channelId],
 	);
+
+	if (!eventChannel) return <text>404 !!</text>;
 
 	return (
 		<container>
@@ -22,9 +20,9 @@ export const SettingsEventChannelsChannel = () => {
 				<h2>Event Channel: {channelMention(channelId)}</h2>
 				<b>Roles to mention on event create:</b>
 				<ul>
-					{eventChannel?.mentionRoleIds.map(roleId => (
+					{eventChannel?.mentionRoleIds.map((roleId) => (
 						<li key={roleId}>{roleMention(roleId)}</li>
-					)) || (<i>None</i>)}
+					)) || <i>None</i>}
 				</ul>
 				<br />
 			</text>
@@ -37,7 +35,7 @@ export const SettingsEventChannelsChannel = () => {
 					max={10}
 					onSelect={async (int) => {
 						const selectedRoleIds = int.values || [];
-						await useGuildDataStore.setState(draft => {
+						await useGuildDataStore.setState((draft) => {
 							draft.guilds[guildId]!.eventChannels[channelId]!.mentionRoleIds = selectedRoleIds;
 						});
 					}}

@@ -3,7 +3,10 @@ import react from "@vitejs/plugin-react";
 
 globalThis.window = globalThis as any;
 
-const PROD = process.env.NODE_ENV === "production" || process.env.VITE_MODE === "production" || process.argv.includes("prod");
+const PROD =
+	process.env.NODE_ENV === "production" ||
+	process.env.VITE_MODE === "production" ||
+	process.argv.includes("prod");
 
 const viteServer = await createServer({
 	appType: "custom",
@@ -27,9 +30,7 @@ const viteServer = await createServer({
 			},
 		},
 	},
-	plugins: [
-		react(),
-	],
+	plugins: [react()],
 });
 
 console.log("Vite server is running.");
@@ -39,4 +40,3 @@ const serverEnvironment = viteServer.environments.node! as RunnableDevEnvironmen
 const publish = process.argv.includes("publish") || process.argv.includes("pub");
 
 await serverEnvironment.runner.import(publish ? "src/publish.ts" : "src/index.ts");
-

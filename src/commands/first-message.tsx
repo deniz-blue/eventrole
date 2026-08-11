@@ -10,18 +10,16 @@ export default defineCommand({
 	},
 	execute: async (interaction) => {
 		if (!interaction.guild) throw err("❌ This command can only be used in a server.");
-		if (!interaction.channel || (
-			interaction.channel.type !== ChannelType.PublicThread &&
-			interaction.channel.type !== ChannelType.PrivateThread
-		)) throw err("❌ This command can only be used in a thread channel.");
+		if (
+			!interaction.channel ||
+			(interaction.channel.type !== ChannelType.PublicThread &&
+				interaction.channel.type !== ChannelType.PrivateThread)
+		)
+			throw err("❌ This command can only be used in a thread channel.");
 
 		await interaction.reply({
 			flags: [MessageFlags.Ephemeral],
-			content: `${messageLink(
-				interaction.channelId,
-				interaction.channelId,
-				interaction.guild.id,
-			)}`,
+			content: `${messageLink(interaction.channelId, interaction.channelId, interaction.guild.id)}`,
 		});
 	},
 });

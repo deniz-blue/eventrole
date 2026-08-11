@@ -1,5 +1,13 @@
 import type { Translations } from "@evnt/schema";
-import type { ApplicationCommandType, ChatInputCommandInteraction, ContextMenuCommandInteraction, ContextMenuCommandType, MessageContextMenuCommandInteraction, SlashCommandBuilder, UserContextMenuCommandInteraction } from "discord.js";
+import type {
+	ApplicationCommandType,
+	ChatInputCommandInteraction,
+	ContextMenuCommandInteraction,
+	ContextMenuCommandType,
+	MessageContextMenuCommandInteraction,
+	SlashCommandBuilder,
+	UserContextMenuCommandInteraction,
+} from "discord.js";
 
 export interface BaseCommand {
 	name: string;
@@ -10,7 +18,7 @@ export interface SlashCommand extends BaseCommand {
 	type: "slash";
 	contextType?: ContextMenuCommandType;
 	execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
-};
+}
 
 export interface MessageContextMenuCommand extends BaseCommand {
 	type: "context";

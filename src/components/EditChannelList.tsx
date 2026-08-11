@@ -11,17 +11,22 @@ export const SettingsEventChannels = () => {
 	const interaction = useInteraction();
 	const navigate = useNavigate();
 
-	const data = useGuildDataStore(state => state.guilds[interaction!.guildId!]) ?? { eventChannels: {}, eventThreads: {} };
+	const data = useGuildDataStore((state) => state.guilds[interaction!.guildId!]) ?? {
+		eventChannels: {},
+		eventThreads: {},
+	};
 
 	return (
 		<container>
 			<text>
 				<h2>Event Channels</h2>
 				<EventChannelsList data={data.eventChannels} />
-				{message && (<>
-					<br />
-					<b>{message}</b>
-				</>)}
+				{message && (
+					<>
+						<br />
+						<b>{message}</b>
+					</>
+				)}
 			</text>
 			{Object.keys(data.eventChannels).length > 0 && (
 				<row>
@@ -44,15 +49,17 @@ export const SettingsEventChannels = () => {
 				<button
 					style="success"
 					onClick={() => {
-						openModal((
+						openModal(
 							<modal
 								title="Add Event Channel"
 								onSubmit={async (interaction) => {
 									const channel = interaction.fields.getSelectedChannels("channel")!.at(0)!;
 
-									await useGuildDataStore.setState(draft => {
+									await useGuildDataStore.setState((draft) => {
 										draft.guilds[interaction.guildId!] ??= { eventChannels: {}, eventThreads: {} };
-										draft.guilds[interaction.guildId!]!.eventChannels[channel.id] = { mentionRoleIds: [] };
+										draft.guilds[interaction.guildId!]!.eventChannels[channel.id] = {
+											mentionRoleIds: [],
+										};
 									});
 
 									setMessage(`Added event channel ${channelMention(channel.id)}!`);
@@ -60,10 +67,16 @@ export const SettingsEventChannels = () => {
 								}}
 							>
 								<label label="Channel" description="Which forum channel to use for events?">
-									<select type="channel" customId="channel" channelTypes={[ChannelType.GuildForum]} min={1} max={1} />
+									<select
+										type="channel"
+										customId="channel"
+										channelTypes={[ChannelType.GuildForum]}
+										min={1}
+										max={1}
+									/>
 								</label>
-							</modal>
-						));
+							</modal>,
+						);
 					}}
 				>
 					Add New Event Channel
