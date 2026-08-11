@@ -23,7 +23,7 @@ export default defineCommand({
 	},
 	execute: async (interaction) => {
 		if (!interaction.guild) throw err("❌ This command can only be used in a server.");
-		if (!canManageThread(interaction)) throw err("❌ You are not allowed to use this command.");
+		if (!interaction.channel?.isThread()) throw err("❌ You are not allowed to use this command.");
 
 		if (!getEventThreadOrThrow(interaction).openevnt) {
 			await interaction.deferReply({
