@@ -14,6 +14,7 @@ import type {
 import { useGuildDataStore } from "../database/store";
 import { djsx } from "discord-jsx-renderer";
 import { DiscordFormatter } from "@evnt/pretty";
+import { logger } from "../util/logger";
 
 export default defineCommand({
 	name: "event",
@@ -88,9 +89,15 @@ export default defineCommand({
 				body: JSON.stringify(draft),
 			});
 
-			if (!res.ok) throw err(`❌ Failed to create event on Folio: ${res.status} ${res.statusText}`);
+			if (!res.ok) {
+				const text = await res.text();
+				logger.error(`FOLIO_CREATE_FAIL ${res.status} ${res.statusText} ${text}`);
+				throw err(`❌ Failed to create event on Folio: ${res.status} ${res.statusText}\n${text}`);
+			}
 
 			const { id, edit_token } = (await res.json()) as { id: string; edit_token: string };
+
+			logger.info(`FOLIO_CREATE_SUCCESS ${id} ${edit_token.replace(/./g, "*")}`);
 
 			useGuildDataStore.setState((state) => {
 				state.guilds[interaction.guild!.id]!.eventThreads[interaction.channelId]!.openevnt = {
@@ -108,6 +115,12 @@ export default defineCommand({
 		const res = await fetch(
 			`https://folio.denizblue.workers.dev/events/${eventThread.openevnt.id}`,
 		);
+
+		if (!res.ok) {
+			const text = await res.text();
+			logger.error(`FOLIO_FETCH_FAIL ${res.status} ${res.statusText} ${text}`);
+			throw err(`❌ Failed to fetch event from Folio: ${res.status} ${res.statusText}\n${text}`);
+		}
 
 		const data = (await res.json()) as OpenEvnt;
 
