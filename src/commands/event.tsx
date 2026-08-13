@@ -81,6 +81,10 @@ export default defineCommand({
 				],
 			};
 
+			logger.info(
+				`FOLIO_CREATE ${interaction.guild.id} ${interaction.channelId}\n${JSON.stringify(draft, null, 2)}`,
+			);
+
 			const res = await fetch(`https://folio.denizblue.workers.dev/events`, {
 				method: "POST",
 				headers: {
