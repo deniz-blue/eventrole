@@ -3,16 +3,17 @@ import react from "@vitejs/plugin-react";
 
 globalThis.window = globalThis as any;
 
-// const PROD =
-// 	process.env.NODE_ENV === "production" ||
-// 	process.env.VITE_MODE === "production" ||
-// 	process.argv.includes("prod");
+const watching = process.argv.includes("dev");
+
+// Vite opens the HMR websocket on port 24678 and starts a file watcher whether or not
+// anything reloads, so a plain run would otherwise fight a watching one for the port.
+const server = watching
+	? { middlewareMode: true as const }
+	: { middlewareMode: true as const, hmr: false as const, ws: false as const, watch: null };
 
 const viteServer = await createServer({
 	appType: "custom",
-	server: {
-		middlewareMode: true,
-	},
+	server,
 	clearScreen: false,
 	envPrefix: ["VITE_", "NODE_", "DISCORD_"],
 	environments: {

@@ -5,7 +5,7 @@
 	"type": "module",
 	"main": "index.js",
 	"scripts": {
-		"dev": "tsx watch vite",
+		"dev": "tsx watch vite dev",
 		"start": "tsx vite",
 		"pub": "tsx vite publish",
 		"lint": "oxlint",
